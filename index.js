@@ -3,7 +3,7 @@ const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fet
 const cheerio = require("cheerio");
 
 const app = express();
-const port = 4000;
+const port = process.env.PORT || 4000;
 
 app.get("/crawl-data", async (req, res) => {
 	const url = req.query?.url;
