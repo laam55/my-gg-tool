@@ -1,9 +1,12 @@
 const express = require("express");
 const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
 const cheerio = require("cheerio");
+const cors = require("cors");
 
 const app = express();
 const port = process.env.PORT || 4000;
+
+app.use(cors({ origin: "*" }));
 
 app.get("/crawl-data", async (req, res) => {
 	const url = req.query?.url;
