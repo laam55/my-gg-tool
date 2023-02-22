@@ -1,12 +1,14 @@
 const express = require("express");
-const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
-const cheerio = require("cheerio");
 const cors = require("cors");
+const fetch = (...args) => import("node-fetch").then(({ default: fetch }) => fetch(...args));
+const jwt = require("jsonwebtoken");
+const cheerio = require("cheerio");
 
 const app = express();
 const port = process.env.PORT || 4000;
 
 app.use(cors({ origin: "*" }));
+app.use(express.json());
 
 app.get("/crawl-data", async (req, res) => {
 	const url = req.query?.url;
@@ -22,6 +24,26 @@ app.get("/crawl-data", async (req, res) => {
 	} else {
 		res.send("Crawl data! please add query string: ?url=...");
 	}
+});
+
+app.post("/generateToken", (req, res) => {
+	if (!req?.body?.payload) {
+		return res.json({
+			code: 400,
+			message: "Data cannot be empty1!",
+		});
+	}
+
+	if (!req?.body?.signature) {
+		return res.json({
+			code: 400,
+			message: "Signature cannot be empty!",
+		});
+	}
+
+	const token = jwt.sign(req?.body?.payload, req?.body?.signature, { algorithm: "HS256" });
+
+	return res.json({ code: 200, token });
 });
 
 app.get("/", async (req, res) => {
